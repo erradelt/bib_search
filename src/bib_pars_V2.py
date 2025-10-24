@@ -5,7 +5,6 @@ import json
 root_path = Path(
     r"D:\Planungsgruppe M+M AG\Standort Böblingen - Dokumente\Bereichsordner MLB\02_Bereich_MLB\Medizintechnik")
 
-
 def parse_dir_to_dict(path: Path) -> dict:
     structure = {}
     for item in path.iterdir():
@@ -17,10 +16,11 @@ def parse_dir_to_dict(path: Path) -> dict:
             structure[item.name] = None
     return structure
 
+def generate_bibliography():
+    result = {root_path.name: parse_dir_to_dict(root_path)}
+    output_file = 'bibo.json'
+    with open(output_file, 'w', encoding='utf-8') as file:
+        json.dump(result, file, indent=4, ensure_ascii=False)
 
-result = {root_path.name: parse_dir_to_dict(root_path)}
-
-output_file = 'bibo.json'
-with open(output_file, 'w', encoding='utf-8') as file:
-    json.dump(result, file, indent=4, ensure_ascii=False)
-
+if __name__ == '__main__':
+    generate_bibliography()

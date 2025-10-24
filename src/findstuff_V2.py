@@ -2,8 +2,6 @@ import filepathgen as fg
 import re
 import json
 
-from pprint import pprint
-
 js_path = fg.current_directory + "/bibo.json"
 
 
@@ -91,14 +89,7 @@ def find_path(structure, target, current_path=None, pathlist=None):
     return pathlist
 
 
-def get_input(source=data):
-    search_term = input("was suchst?: ")
-    results = find_path(source, search_term)  # results contains the paths
 
-    return results
-
-
-results = get_input()
 
 
 # makes lists into dicts
@@ -110,12 +101,10 @@ def sort_results(tree, path):
 
 
 # passes the paths (variable "results") to def sort_results and an empty tree to start with
-def results_as_dict(paths=results):
+def results_as_dict(search_term):
+    paths = find_path(data, search_term)
     tree = {}
     for p in paths:
         sort_results(tree, p)
 
     return tree
-
-
-print(results_as_dict())
