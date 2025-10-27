@@ -1,9 +1,17 @@
 import sys
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from search_window import Ui_MainWindow
 from bib_pars_V2 import generate_bibliography
 from findstuff_V2 import results_as_dict
 import json
+
+
+class BibliographyWorker(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+
+    def run(self):
+        generate_bibliography()
+        self.finished.emit()
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -70,12 +78,30 @@ class MainWindow(QtWidgets.QMainWindow):
         print("\\".join(path_components))
 
     def update_bibliography(self):
-        generate_bibliography()
-        # Optional: show a message to the user
+        # Button temporär deaktivieren, um Doppelstarts zu verhindern
+        self.ui.pushButton_3.setEnabled(False)
+
+        # Worker & Thread erzeugen
+        self.thread = QtCore.QThread()
+        self.worker = BibliographyWorker()
+        self.worker.moveToThread(self.thread)
+
+        # Signalverbindungen
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.on_bibliography_finished)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+
+        # Thread starten
+        self.thread.start()
+
+    def on_bibliography_finished(self):
+        self.ui.pushButton_3.setEnabled(True)
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Information)
-        msg.setText("Bibliography updated successfully!")
-        msg.setWindowTitle("Update complete")
+        msg.setText("Verzeichnis erfolgreich geladen!")
+        msg.setWindowTitle("Verzeichnis geladen")
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec_()
 

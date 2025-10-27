@@ -1,26 +1,49 @@
 from pathlib import Path
-import filepathgen as fg
 import json
+import os
 
-root_path = Path(
-    r"D:\Planungsgruppe M+M AG\Standort Böblingen - Dokumente\Bereichsordner MLB\02_Bereich_MLB\Medizintechnik")
+root_path = Path("P:\Projekte\BB18-900")
 
-def parse_dir_to_dict(path: Path) -> dict:
-    structure = {}
-    for item in path.iterdir():
+
+def write_dir_json(path: Path, file, indent_level=1):
+    """Schreibt rekursiv die Verzeichnisstruktur, ohne alles in den RAM zu laden."""
+    indent = "    " * indent_level
+    entries = []
+
+    # Wir sortieren, damit die Ausgabe stabil ist (optional)
+    for item in sorted(path.iterdir(), key=lambda p: p.name.lower()):
+        # Symlinks ignorieren → verhindert Endlosrekursion
+        if item.is_symlink():
+            continue
+        entries.append(item)
+
+    for index, item in enumerate(entries):
+        is_last = (index == len(entries) - 1)
+
+        # Ordner
         if item.is_dir():
-            # Ordner → rekursiver Aufruf
-            structure[item.name] = parse_dir_to_dict(item)
+            file.write(f'{indent}{json.dumps(item.name)}: {{\n')
+            write_dir_json(item, file, indent_level + 1)
+            file.write(f'{indent}}}')
         else:
-            # Datei → Wert kann None oder Info sein
-            structure[item.name] = None
-    return structure
+            # Datei
+            file.write(f'{indent}{json.dumps(item.name)}: null')
+
+        if not is_last:
+            file.write(",\n")
+        else:
+            file.write("\n")
+
 
 def generate_bibliography():
-    result = {root_path.name: parse_dir_to_dict(root_path)}
-    output_file = 'bibo.json'
-    with open(output_file, 'w', encoding='utf-8') as file:
-        json.dump(result, file, indent=4, ensure_ascii=False)
+    output_file = "bibo.json"
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write("{\n")
+        f.write(f'    {json.dumps(root_path.name)}: {{\n')
+        write_dir_json(root_path, f, 2)
+        f.write("    }\n")
+        f.write("}\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     generate_bibliography()
