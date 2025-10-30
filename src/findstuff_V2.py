@@ -86,7 +86,12 @@ def find_path(structure, target, current_path=None, pathlist=None):
                 # pathlist.append("/".join(new_path))
         if isinstance(value, dict):
             pathlist = find_path(value, target, new_path, pathlist)
-    return pathlist
+    for p in pathlist:
+        for item in p:
+            if item.endswith((".jpg",".docx")):
+                filtered_pathlist.append(p)
+            
+    return filtered_pathlist
 
 
 
