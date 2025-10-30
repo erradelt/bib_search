@@ -1,9 +1,10 @@
 import sys
+import os
+from pathlib import Path
 from PyQt5 import QtWidgets, QtCore
 from search_window import Ui_MainWindow
-from bib_pars_V2 import generate_bibliography
+from bib_pars_V2 import generate_bibliography, root_path
 from findstuff_V2 import results_as_dict
-import json
 
 
 class BibliographyWorker(QtCore.QObject):
@@ -19,11 +20,12 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
         self.ui.pushButton.clicked.connect(self.search_files)
         self.ui.pushButton_3.clicked.connect(self.update_bibliography)
         self.ui.pushButton_2.clicked.connect(self.close)
         self.ui.lineEdit.returnPressed.connect(self.search_files)
-        self.ui.treeWidget.itemClicked.connect(self.on_item_clicked)
+        self.ui.treeWidget.itemDoubleClicked.connect(self.on_item_double_clicked)
 
         self.other_checkboxes = [
             self.ui.checkBox_2,
@@ -61,39 +63,71 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.treeWidget.clear()
         search_term = self.ui.lineEdit.text()
         results = results_as_dict(search_term)
-        from bib_pars_V2 import root_path
-        self.add_items(self.ui.treeWidget.invisibleRootItem(), results, [str(root_path)])
+        # We start recursive add with empty list as relative path
+        self.add_items(self.ui.treeWidget.invisibleRootItem(), results, [])
         self.ui.treeWidget.expandAll()
 
-    def add_items(self, parent, elements, path_components):
+    def add_items(self, parent, elements, relative_components):
         for key, value in elements.items():
-            new_path_components = path_components + [key]
-            item = QtWidgets.QTreeWidgetItem(parent, [key])
-            item.setData(0, 1000, new_path_components)
-            if isinstance(value, dict):
-                self.add_items(item, value, new_path_components)
+            # Build new relative path components
+            new_rel = relative_components + [key]
 
-    def on_item_clicked(self, item, column):
-        path_components = item.data(0, 1000)
-        print("\\".join(path_components))
+            # If the first component duplicates last part of root_path, remove it
+            root_last = Path(root_path).parts[-1]
+            if len(new_rel) > 1 and new_rel[0] == root_last:
+                stored_rel_path = new_rel[1:]
+            else:
+                stored_rel_path = new_rel
+
+            item = QtWidgets.QTreeWidgetItem(parent, [key])
+            # Store relative components as tuple directly
+            item.setData(0, 1000, tuple(stored_rel_path))
+
+            if isinstance(value, dict):
+                self.add_items(item, value, new_rel)
+
+    def on_item_double_clicked(self, item, column):
+        rel_path_tuple = item.data(0, 1000)  # tuple of components
+        full_path = Path(root_path).joinpath(*rel_path_tuple).resolve(strict=False)
+
+        # Debug prints
+        print("[DEBUG] relative components:", rel_path_tuple)
+        print("[DEBUG] concatenated full_path:", str(full_path))
+        print("[DEBUG] exists:", full_path.exists())
+
+        if full_path.exists():
+            try:
+                if sys.platform.startswith("darwin"):
+                    import subprocess
+                    subprocess.Popen(['open', str(full_path)])
+                elif sys.platform.startswith("linux"):
+                    import subprocess
+                    subprocess.Popen(['xdg-open', str(full_path)])
+                elif sys.platform.startswith("win"):
+                    os.startfile(str(full_path))
+            except Exception as e:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    "Fehler",
+                    f"Konnte nicht geöffnet werden:\n{e}\n\nPfad: {full_path}",
+                )
+        else:
+            QtWidgets.QMessageBox.warning(
+                self,
+                "Nicht gefunden",
+                f"Pfad existiert nicht:\n\n{full_path}",
+            )
 
     def update_bibliography(self):
-        # Button temporär deaktivieren, um Doppelstarts zu verhindern
         self.ui.pushButton_3.setEnabled(False)
-
-        # Worker & Thread erzeugen
         self.thread = QtCore.QThread()
         self.worker = BibliographyWorker()
         self.worker.moveToThread(self.thread)
-
-        # Signalverbindungen
         self.thread.started.connect(self.worker.run)
         self.worker.finished.connect(self.on_bibliography_finished)
         self.worker.finished.connect(self.thread.quit)
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
-
-        # Thread starten
         self.thread.start()
 
     def on_bibliography_finished(self):
