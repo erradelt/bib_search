@@ -16,6 +16,7 @@ def file_loader():
 
 
 data = file_loader()
+file_formats = [".jpg", ".docx"]
 
 # list that contains functions to manipulate inputstring (searchterm)
 replacements = [
@@ -70,31 +71,30 @@ def find_doc(structure, target):
 
 
 # find all pathes of a given searchterm
-def find_path(structure, target, current_path=None, pathlist=None):
-    current_path = current_path or []
-    pathlist = pathlist or []
-    variants = search_variants(target)
-
+def find_path_recursive(structure, variants, current_path, pathlist, found_in_parent):
+    """Helper that recursively finds file paths matching search criteria."""
     for key, value in structure.items():
         new_path = current_path + [key]
-        if any(variant.lower() in key.lower() for variant in variants):
-            # pathlist.append("/".join(new_path))
-            pathlist.append(new_path)
-        if isinstance(value, str):
-            if any(variant.lower() in value.lower() for variant in variants):
+        key_matches = any(variant.lower() in key.lower() for variant in variants)
+
+        if value is None:  # It's a file
+            if found_in_parent or key_matches:
                 pathlist.append(new_path)
-                # pathlist.append("/".join(new_path))
-        if isinstance(value, dict):
-            pathlist = find_path(value, target, new_path, pathlist)
-    for p in pathlist:
-        for item in p:
-            if item.endswith((".jpg",".docx")):
-                filtered_pathlist.append(p)
-            
-    return filtered_pathlist
+        elif isinstance(value, dict):  # It's a directory
+            find_path_recursive(
+                value, variants, new_path, pathlist, found_in_parent or key_matches
+            )
 
 
-
+def find_path(structure, target):
+    """
+    Finds all FILE paths where the search term matches a component of the path
+    (a folder or the filename).
+    """
+    variants = search_variants(target)
+    pathlist = []
+    find_path_recursive(structure, variants, [], pathlist, False)
+    return pathlist
 
 
 # makes lists into dicts
@@ -107,9 +107,23 @@ def sort_results(tree, path):
 
 # passes the paths (variable "results") to def sort_results and an empty tree to start with
 def results_as_dict(search_term):
-    paths = find_path(data, search_term)
+    """
+    Finds all file paths matching the search term, filters them by the selected
+    file formats, and returns the results as a nested dictionary.
+    """
+    # 1. Get all file paths where a component matches the search term.
+    # This is efficient as it only traverses the data tree once.
+    all_matching_files = find_path(data, search_term)
+
+    # 2. Filter these file paths by the selected file formats.
     tree = {}
-    for p in paths:
-        sort_results(tree, p)
+    if not file_formats:
+        return tree  # No formats selected, return empty result.
+
+    formats_tuple = tuple(file_formats)
+    for path in all_matching_files:
+        # The last component of the path is the filename.
+        if path and path[-1].endswith(formats_tuple):
+            sort_results(tree, path)
 
     return tree

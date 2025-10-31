@@ -1,10 +1,12 @@
 import sys
 import os
 from pathlib import Path
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from search_window import Ui_MainWindow
 from bib_pars_V2 import generate_bibliography, root_path
 from findstuff_V2 import results_as_dict
+import findstuff_V2
+from endings import endings
 
 
 class BibliographyWorker(QtCore.QObject):
@@ -26,6 +28,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.close)
         self.ui.lineEdit.returnPressed.connect(self.search_files)
         self.ui.treeWidget.itemDoubleClicked.connect(self.on_item_double_clicked)
+        self.ui.treeWidget.setAlternatingRowColors(True)
+        self.ui.treeWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.treeWidget.customContextMenuRequested.connect(self.open_context_menu)
 
         self.other_checkboxes = [
             self.ui.checkBox_2,
@@ -59,7 +64,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.checkBox.setChecked(False)
         self.ui.checkBox.blockSignals(False)
 
+    def get_selected_file_formats(self):
+        checkbox_mapping = {
+            self.ui.checkBox_2: "pdf",
+            self.ui.checkBox_5: "doc",
+            self.ui.checkBox_6: "xls",
+            self.ui.checkBox_7: "dwg",
+            self.ui.checkBox_3: "pic",
+            self.ui.checkBox_4: "vid",
+        }
+
+        selected_formats = []
+        for checkbox, key in checkbox_mapping.items():
+            if checkbox.isChecked():
+                selected_formats.extend(endings[key])
+
+        return selected_formats
+
     def search_files(self):
+        findstuff_V2.file_formats = self.get_selected_file_formats()
         self.ui.treeWidget.clear()
         search_term = self.ui.lineEdit.text()
         results = results_as_dict(search_term)
@@ -83,26 +106,27 @@ class MainWindow(QtWidgets.QMainWindow):
             # Store relative components as tuple directly
             item.setData(0, 1000, tuple(stored_rel_path))
 
-            if isinstance(value, dict):
+            # If the value is a non-empty dictionary, it's a folder.
+            if isinstance(value, dict) and value:
+                font = QtGui.QFont()
+                font.setBold(True)
+                item.setFont(0, font)
                 self.add_items(item, value, new_rel)
 
     def on_item_double_clicked(self, item, column):
         rel_path_tuple = item.data(0, 1000)  # tuple of components
-        full_path = Path(root_path).joinpath(*rel_path_tuple).resolve(strict=False)
-
-        # Debug prints
-        print("[DEBUG] relative components:", rel_path_tuple)
-        print("[DEBUG] concatenated full_path:", str(full_path))
-        print("[DEBUG] exists:", full_path.exists())
+        full_path = Path(root_path).joinpath(*rel_path_tuple)
 
         if full_path.exists():
             try:
                 if sys.platform.startswith("darwin"):
                     import subprocess
-                    subprocess.Popen(['open', str(full_path)])
+
+                    subprocess.Popen(["open", str(full_path)])
                 elif sys.platform.startswith("linux"):
                     import subprocess
-                    subprocess.Popen(['xdg-open', str(full_path)])
+
+                    subprocess.Popen(["xdg-open", str(full_path)])
                 elif sys.platform.startswith("win"):
                     os.startfile(str(full_path))
             except Exception as e:
@@ -117,6 +141,22 @@ class MainWindow(QtWidgets.QMainWindow):
                 "Nicht gefunden",
                 f"Pfad existiert nicht:\n\n{full_path}",
             )
+
+    def open_context_menu(self, position):
+        item = self.ui.treeWidget.itemAt(position)
+        if item:
+            menu = QtWidgets.QMenu()
+            copy_action = menu.addAction("Pfad kopieren")
+            action = menu.exec_(self.ui.treeWidget.mapToGlobal(position))
+            if action == copy_action:
+                self.copy_item_path(item)
+
+    def copy_item_path(self, item):
+        rel_path_tuple = item.data(0, 1000)
+        if rel_path_tuple:
+            full_path = Path(root_path).joinpath(*rel_path_tuple)
+            clipboard = QtWidgets.QApplication.clipboard()
+            clipboard.setText(str(full_path))
 
     def update_bibliography(self):
         self.ui.pushButton_3.setEnabled(False)
