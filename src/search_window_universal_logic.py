@@ -2,33 +2,21 @@ import sys
 import os
 from pathlib import Path
 from PyQt5 import QtWidgets, QtCore, QtGui
-from search_window import Ui_MainWindow
-from search_window_universal_logic import SearchWindowUniversal
+from search_window_universal import Ui_SearchWindowUniversal
 from path_manager_logic import PathManager
-from bib_pars_V2 import generate_bibliography, root_path
+from bib_pars_V2 import root_path
 from findstuff_V2 import results_as_dict
 import findstuff_V2
 from endings import endings
 
-
-class BibliographyWorker(QtCore.QObject):
-    finished = QtCore.pyqtSignal()
-
-    def run(self):
-        generate_bibliography()
-        self.finished.emit()
-
-
-class MainWindow(QtWidgets.QMainWindow):
+class SearchWindowUniversal(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ui = Ui_MainWindow()
+        self.ui = Ui_SearchWindowUniversal()
         self.ui.setupUi(self)
 
         self.ui.pushButton.clicked.connect(self.search_files)
-        self.ui.pushButton_3.clicked.connect(self.open_path_manager)
-
-
+        self.ui.pushButton_2.clicked.connect(self.open_path_manager)
         self.ui.lineEdit.returnPressed.connect(self.search_files)
         self.ui.treeWidget.itemDoubleClicked.connect(self.on_item_double_clicked)
         self.ui.treeWidget.setAlternatingRowColors(True)
@@ -164,57 +152,3 @@ class MainWindow(QtWidgets.QMainWindow):
             full_path = Path(root_path).joinpath(*rel_path_tuple)
             clipboard = QtWidgets.QApplication.clipboard()
             clipboard.setText(str(full_path))
-
-    def update_bibliography(self):
-        self.ui.pushButton_3.setEnabled(False)
-        self.thread = QtCore.QThread()
-        self.worker = BibliographyWorker()
-        self.worker.moveToThread(self.thread)
-        self.thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.on_bibliography_finished)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-        self.thread.start()
-
-    def on_bibliography_finished(self):
-        self.ui.pushButton_3.setEnabled(True)
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Information)
-        msg.setText("Verzeichnis erfolgreich geladen!")
-        msg.setWindowTitle("Verzeichnis geladen")
-        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-        msg.exec_()
-
-
-class App(QtWidgets.QApplication):
-    def __init__(self, argv):
-        super().__init__(argv)
-        self.main_window = MainWindow()
-        self.universal_window = SearchWindowUniversal()
-
-        self.main_window.ui.pushButton_switch.clicked.connect(self.switch_to_universal)
-        self.universal_window.ui.pushButton_switch.clicked.connect(self.switch_to_main)
-
-        # Add a button to the universal window to switch back to the main window
-        self.current_window = self.universal_window
-        self.current_window.show()
-
-    def switch_to_universal(self):
-        self.current_window.hide()
-        self.current_window = self.universal_window
-        self.current_window.show()
-
-    def switch_to_main(self):
-        self.current_window.hide()
-        self.current_window = self.main_window
-        self.current_window.show()
-
-
-def main():
-    app = App(sys.argv)
-    sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()

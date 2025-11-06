@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/robert/Python/09_bib_search/ui/search_window.ui'
+# Form implementation generated from reading ui file '/home/robert/Python/09_bib_search/ui/search_window_universal.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(537, 600)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_SearchWindowUniversal(object):
+    def setupUi(self, SearchWindowUniversal):
+        SearchWindowUniversal.setObjectName("SearchWindowUniversal")
+        SearchWindowUniversal.resize(537, 600)
+        self.centralwidget = QtWidgets.QWidget(SearchWindowUniversal)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -74,42 +74,50 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.treeWidget)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_4.addWidget(self.label_2)
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_4.addWidget(self.label_3)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
-        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.horizontalLayout_4.addWidget(self.pushButton_3)
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.horizontalLayout_4.addWidget(self.pushButton_2)
         self.pushButton_switch = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_switch.setObjectName("pushButton_switch")
         self.horizontalLayout_4.addWidget(self.pushButton_switch)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-        MainWindow.setCentralWidget(self.centralwidget)
+        SearchWindowUniversal.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(SearchWindowUniversal)
+        QtCore.QMetaObject.connectSlotsByName(SearchWindowUniversal)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, SearchWindowUniversal):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "suchen"))
-        self.label.setText(_translate("MainWindow", "Dateitypen"))
-        self.checkBox.setText(_translate("MainWindow", "alles"))
-        self.checkBox_2.setText(_translate("MainWindow", ".pdf"))
-        self.checkBox_5.setText(_translate("MainWindow", ".doc(x)"))
-        self.checkBox_6.setText(_translate("MainWindow", ".xls(x)"))
-        self.checkBox_7.setText(_translate("MainWindow", ".dwg"))
-        self.checkBox_3.setText(_translate("MainWindow", "Bilder"))
-        self.checkBox_4.setText(_translate("MainWindow", "Videos"))
-        self.treeWidget.headerItem().setText(0, _translate("MainWindow", "folder"))
-        self.pushButton_3.setText(_translate("MainWindow", "Verzeichnisse"))
-        self.pushButton_switch.setText(_translate("MainWindow", "Switch to Universal"))
+        SearchWindowUniversal.setWindowTitle(_translate("SearchWindowUniversal", "MainWindow"))
+        self.pushButton.setText(_translate("SearchWindowUniversal", "suchen"))
+        self.label.setText(_translate("SearchWindowUniversal", "Dateitypen"))
+        self.checkBox.setText(_translate("SearchWindowUniversal", "alles"))
+        self.checkBox_2.setText(_translate("SearchWindowUniversal", ".pdf"))
+        self.checkBox_5.setText(_translate("SearchWindowUniversal", ".doc(x)"))
+        self.checkBox_6.setText(_translate("SearchWindowUniversal", ".xls(x)"))
+        self.checkBox_7.setText(_translate("SearchWindowUniversal", ".dwg"))
+        self.checkBox_3.setText(_translate("SearchWindowUniversal", "Bilder"))
+        self.checkBox_4.setText(_translate("SearchWindowUniversal", "Videos"))
+        self.treeWidget.headerItem().setText(0, _translate("SearchWindowUniversal", "folder"))
+        self.label_2.setText(_translate("SearchWindowUniversal", "aktuelles Verzeichnis "))
+        self.label_3.setText(_translate("SearchWindowUniversal", "TextLabel"))
+        self.pushButton_2.setText(_translate("SearchWindowUniversal", "Verzeichnisse"))
+        self.pushButton_switch.setText(_translate("SearchWindowUniversal", "Switch to Main"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    SearchWindowUniversal = QtWidgets.QMainWindow()
+    ui = Ui_SearchWindowUniversal()
+    ui.setupUi(SearchWindowUniversal)
+    SearchWindowUniversal.show()
     sys.exit(app.exec_())
