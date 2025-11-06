@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>SearchWindowUniversal</class>
+ <widget class="QMainWindow" name="SearchWindowUniversal">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -130,7 +130,20 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
-
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>aktuelles Verzeichnis </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
@@ -145,7 +158,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="pushButton_2">
          <property name="text">
           <string>Verzeichnisse</string>
          </property>
@@ -154,7 +167,7 @@
        <item>
         <widget class="QPushButton" name="pushButton_switch">
          <property name="text">
-          <string>Switch to Universal</string>
+          <string>Switch to Main</string>
          </property>
         </widget>
        </item>
