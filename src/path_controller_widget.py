@@ -71,18 +71,13 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
-        self.radioButton.setText(_translate("Form", "path_name"))
-        self.label.setText(_translate("Form", "path"))
-        self.pushButton_2.setToolTip(_translate("Form", "<html><head/><body><p>Verzeichnis löschen</p></body></html>"))
-        self.pushButton_2.setText(_translate("Form", ""))
-        self.pushButton.setToolTip(_translate("Form", "Verzeichnis neu scannen"))
-        self.pushButton.setText(_translate("Form", ""))
-        self.label_2.setText(_translate("Form", "last_parsed"))
-        self.label_3.setText(_translate("Form", "parsetime"))
-        self.label_4.setText(_translate("Form", "parsed_dirs"))
-        self.label_5.setText(_translate("Form", "parsed_files"))
+        Form.setWindowTitle("Form")
+        self.radioButton.setText("path_name")
+        self.label.setText("path")
+        self.pushButton_2.setToolTip("<html><head/><body><p>Verzeichnis löschen</p></body></html>")
+        self.pushButton_2.setText("")
+        self.pushButton.setToolTip("Verzeichnis neu scannen")
+        self.pushButton.setText("")
 
 
 if __name__ == "__main__":

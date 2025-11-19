@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import json
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -49,25 +49,43 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox.setObjectName("checkBox")
+        self.checkBox.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox)
         self.checkBox_2 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_2.setObjectName("checkBox_2")
+        self.checkBox_2.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_2)
         self.checkBox_5 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_5.setObjectName("checkBox_5")
+        self.checkBox_5.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_5)
         self.checkBox_6 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_6.setObjectName("checkBox_6")
+        self.checkBox_6.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_6)
         self.checkBox_7 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_7.setObjectName("checkBox_7")
+        self.checkBox_7.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_7)
         self.checkBox_3 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_3.setObjectName("checkBox_3")
+        self.checkBox_3.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_3)
         self.checkBox_4 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_4.setObjectName("checkBox_4")
+        self.checkBox_4.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_4)
+        self.checkBox_8 = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkBox_8.setObjectName("checkBox_8")
+        self.checkBox_8.setChecked(True)
+        self.horizontalLayout.addWidget(self.checkBox_8)
+        self.checkBox_9 = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkBox_9.setObjectName("checkBox_9")
+        self.checkBox_9.setChecked(True)
+        self.horizontalLayout.addWidget(self.checkBox_9)
+        self.checkBox_10 = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkBox_10.setObjectName("checkBox_10")
+        self.horizontalLayout.addWidget(self.checkBox_10)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
         self.treeWidget.setObjectName("treeWidget")
@@ -88,6 +106,13 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        try:
+            with open('active_path.json', 'r') as f:
+                data = json.load(f)
+                self.checkBox_10.setChecked(data.get('collapse_state', False))
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
+            
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -100,9 +125,12 @@ class Ui_MainWindow(object):
         self.checkBox_7.setText(_translate("MainWindow", ".dwg"))
         self.checkBox_3.setText(_translate("MainWindow", "Bilder"))
         self.checkBox_4.setText(_translate("MainWindow", "Videos"))
-        self.treeWidget.headerItem().setText(0, _translate("MainWindow", "folder"))
+        self.checkBox_8.setText(_translate("MainWindow", "Audio"))
+        self.checkBox_9.setText(_translate("MainWindow", "E-Mails"))
+        self.checkBox_10.setText(_translate("MainWindow", "einklappen"))
+        self.treeWidget.headerItem().setText(0, _translate("MainWindow", ""))
         self.pushButton_3.setText(_translate("MainWindow", "Verzeichnisse"))
-        self.pushButton_switch.setText(_translate("MainWindow", "Switch to Universal"))
+        self.pushButton_switch.setText(_translate("MainWindow", "zu Universal"))
 
 
 if __name__ == "__main__":

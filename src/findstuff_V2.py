@@ -1,22 +1,51 @@
-import filepathgen as fg
 import re
+from pathlib import Path
 import json
 
-js_path = fg.current_directory + "/bibo.json"
+def file_loader(dir_name):
+    project_root = Path(__file__).resolve().parent.parent
+    dirs = project_root / "dirs"
+    js_path = dirs / f"{dir_name}.json"
 
-
-def file_loader():
-    """Loads lines from biboliste.txt. Returns an empty list if not found."""
     try:
         with open(js_path, "r", encoding="utf-8") as file:
             data = json.load(file)
-            return data
+            return data.get("data", {})
     except FileNotFoundError:
         return {}
 
+data = {}
+file_formats = []
 
-data = file_loader()
-file_formats = [".jpg", ".docx"]
+def load_active_data():
+    """
+    Loads the data from the json file corresponding to the active path
+    set in the PathManager. Also returns the root path for that directory.
+    """
+    global data
+    active_dir_name = 'Bilder' # Default value
+    active_dir_path = ''
+
+    # Get the active directory name
+    try:
+        active_path_file = Path(__file__).resolve().parent / "active_path.json"
+        with open(active_path_file, "r", encoding="utf-8") as f:
+            active_path_data = json.load(f)
+            active_dir_name = active_path_data.get("active", 'Bilder')
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+
+    # Get the path for the active directory
+    try:
+        dirs_file = Path(__file__).resolve().parent / "directories.json"
+        with open(dirs_file, "r", encoding="utf-8") as f:
+            dirs_data = json.load(f)
+            active_dir_path = dirs_data.get(active_dir_name)
+    except (FileNotFoundError, json.JSONDecodeError):
+        active_dir_path = ""
+
+    data = file_loader(active_dir_name)
+    return active_dir_path
 
 # list that contains functions to manipulate inputstring (searchterm)
 replacements = [
@@ -106,11 +135,26 @@ def sort_results(tree, path):
 
 
 # passes the paths (variable "results") to def sort_results and an empty tree to start with
-def results_as_dict(search_term):
+def results_as_dict(search_term, dict_name=None):
     """
     Finds all file paths matching the search term, filters them by the selected
-    file formats, and returns the results as a nested dictionary.
+    file formats, and returns the results as a nested dictionary and the active dir path.
     """
+    global data
+    active_dir_path = ''
+    
+    if dict_name:
+        data = file_loader(dict_name)
+        try:
+            dirs_file = Path(__file__).resolve().parent / "directories.json"
+            with open(dirs_file, "r", encoding="utf-8") as f:
+                dirs_data = json.load(f)
+                active_dir_path = dirs_data.get(dict_name)
+        except (FileNotFoundError, json.JSONDecodeError):
+            active_dir_path = ""
+    else:
+        active_dir_path = load_active_data()
+
     # 1. Get all file paths where a component matches the search term.
     # This is efficient as it only traverses the data tree once.
     all_matching_files = find_path(data, search_term)
@@ -118,7 +162,7 @@ def results_as_dict(search_term):
     # 2. Filter these file paths by the selected file formats.
     tree = {}
     if not file_formats:
-        return tree  # No formats selected, return empty result.
+        return tree, active_dir_path
 
     formats_tuple = tuple(file_formats)
     for path in all_matching_files:
@@ -126,4 +170,4 @@ def results_as_dict(search_term):
         if path and path[-1].endswith(formats_tuple):
             sort_results(tree, path)
 
-    return tree
+    return tree, active_dir_path
