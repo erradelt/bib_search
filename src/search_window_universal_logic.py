@@ -22,6 +22,7 @@ class SearchWindowUniversal(QtWidgets.QMainWindow):
         self.ui.pushButton_2.customContextMenuRequested.connect(self.show_directory_context_menu)
         self.ui.lineEdit.returnPressed.connect(self.search_files)
         self.ui.treeWidget.itemDoubleClicked.connect(self.on_item_double_clicked)
+        self.ui.treeWidget.itemActivated.connect(self.on_item_double_clicked)
         self.ui.treeWidget.setAlternatingRowColors(True)
         self.ui.treeWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.ui.treeWidget.customContextMenuRequested.connect(self.open_context_menu)

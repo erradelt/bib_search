@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/robert/Python/09_bib_search/ui/search_window.ui'
+# Form implementation generated from reading ui file '/home/robert/Python/09_bib_search/ui/search_window_cross.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -9,12 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import json
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(537, 600)
+        MainWindow.resize(671, 845)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -49,39 +49,30 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox.setObjectName("checkBox")
-        self.checkBox.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox)
         self.checkBox_2 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_2.setObjectName("checkBox_2")
-        self.checkBox_2.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_2)
         self.checkBox_5 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_5.setObjectName("checkBox_5")
-        self.checkBox_5.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_5)
         self.checkBox_6 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_6.setObjectName("checkBox_6")
-        self.checkBox_6.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_6)
         self.checkBox_7 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_7.setObjectName("checkBox_7")
-        self.checkBox_7.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_7)
         self.checkBox_3 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_3.setObjectName("checkBox_3")
-        self.checkBox_3.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_3)
         self.checkBox_4 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_4.setObjectName("checkBox_4")
-        self.checkBox_4.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_4)
         self.checkBox_8 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_8.setObjectName("checkBox_8")
-        self.checkBox_8.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_8)
         self.checkBox_9 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_9.setObjectName("checkBox_9")
-        self.checkBox_9.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_9)
         self.checkBox_10 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_10.setObjectName("checkBox_10")
@@ -100,25 +91,15 @@ class Ui_MainWindow(object):
         self.pushButton_switch = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_switch.setObjectName("pushButton_switch")
         self.horizontalLayout_4.addWidget(self.pushButton_switch)
-        self.pushButton_multi = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_multi.setObjectName("pushButton_multi")
-        self.horizontalLayout_4.addWidget(self.pushButton_multi)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        try:
-            with open('active_path.json', 'r') as f:
-                data = json.load(f)
-                self.checkBox_10.setChecked(data.get('collapse_state', False))
-        except (FileNotFoundError, json.JSONDecodeError):
-            pass
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Bibliothek-Suche"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Multi-Verzeichnis-Suche"))
         self.pushButton.setText(_translate("MainWindow", "suchen"))
         self.label.setText(_translate("MainWindow", "Dateitypen"))
         self.checkBox.setText(_translate("MainWindow", "alles"))
@@ -131,17 +112,5 @@ class Ui_MainWindow(object):
         self.checkBox_8.setText(_translate("MainWindow", "Audio"))
         self.checkBox_9.setText(_translate("MainWindow", "E-Mails"))
         self.checkBox_10.setText(_translate("MainWindow", "einklappen"))
-        self.treeWidget.headerItem().setText(0, _translate("MainWindow", ""))
-        self.pushButton_3.setText(_translate("MainWindow", "Verzeichnisse"))
+        self.pushButton_3.setText(_translate("MainWindow", "zu Bibliothek"))
         self.pushButton_switch.setText(_translate("MainWindow", "zu Universal"))
-        self.pushButton_multi.setText(_translate("MainWindow", "zu Multi"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

@@ -106,6 +106,9 @@ class Ui_SearchWindowUniversal(object):
         self.pushButton_switch = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_switch.setObjectName("pushButton_switch")
         self.horizontalLayout_4.addWidget(self.pushButton_switch)
+        self.pushButton_multi = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_multi.setObjectName("pushButton_multi")
+        self.horizontalLayout_4.addWidget(self.pushButton_multi)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         SearchWindowUniversal.setCentralWidget(self.centralwidget)
 
@@ -121,7 +124,7 @@ class Ui_SearchWindowUniversal(object):
 
     def retranslateUi(self, SearchWindowUniversal):
         _translate = QtCore.QCoreApplication.translate
-        SearchWindowUniversal.setWindowTitle(_translate("SearchWindowUniversal", "MainWindow"))
+        SearchWindowUniversal.setWindowTitle(_translate("SearchWindowUniversal", "Universal-Suche"))
         self.pushButton.setText(_translate("SearchWindowUniversal", "suchen"))
         self.label.setText(_translate("SearchWindowUniversal", "Dateitypen"))
         self.checkBox.setText(_translate("SearchWindowUniversal", "alles"))
@@ -139,6 +142,7 @@ class Ui_SearchWindowUniversal(object):
         self.label_3.setText(_translate("SearchWindowUniversal", "TextLabel"))
         self.pushButton_2.setText(_translate("SearchWindowUniversal", "Verzeichnisse"))
         self.pushButton_switch.setText(_translate("SearchWindowUniversal", "zur Bibliothek"))
+        self.pushButton_multi.setText(_translate("SearchWindowUniversal", "zu Multi"))
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 import json
 from search_window import Ui_MainWindow
 from search_window_universal_logic import SearchWindowUniversal
+from search_window_cross_logic import SearchWindowCross
 from path_manager_logic import PathManager
 from bib_pars_V2 import root_path
 from findstuff_V2 import results_as_dict
@@ -34,6 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.lineEdit.returnPressed.connect(self.search_files)
         self.ui.treeWidget.itemDoubleClicked.connect(self.on_item_double_clicked)
+        self.ui.treeWidget.itemActivated.connect(self.on_item_double_clicked)
         self.ui.treeWidget.setAlternatingRowColors(True)
         self.ui.treeWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.ui.treeWidget.customContextMenuRequested.connect(self.open_context_menu)
@@ -252,9 +254,14 @@ class App(QtWidgets.QApplication):
         super().__init__(argv)
         self.main_window = MainWindow()
         self.universal_window = SearchWindowUniversal()
+        self.cross_window = SearchWindowCross()
 
         self.main_window.ui.pushButton_switch.clicked.connect(self.switch_to_universal)
+        self.main_window.ui.pushButton_multi.clicked.connect(self.switch_to_cross)
         self.universal_window.ui.pushButton_switch.clicked.connect(self.switch_to_main)
+        self.universal_window.ui.pushButton_multi.clicked.connect(self.switch_to_cross)
+        self.cross_window.ui.pushButton_switch.clicked.connect(self.switch_to_universal)
+        self.cross_window.ui.pushButton_3.clicked.connect(self.switch_to_main)
 
         # Add a button to the universal window to switch back to the main window
         self.current_window = self.universal_window
@@ -269,6 +276,11 @@ class App(QtWidgets.QApplication):
     def switch_to_main(self):
         self.current_window.hide()
         self.current_window = self.main_window
+        self.current_window.show()
+
+    def switch_to_cross(self):
+        self.current_window.hide()
+        self.current_window = self.cross_window
         self.current_window.show()
 
 
