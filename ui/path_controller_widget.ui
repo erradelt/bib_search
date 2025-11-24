@@ -103,14 +103,14 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>last_parsed</string>
+        <string/>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>parsetime</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -121,14 +121,14 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>parsed_dirs</string>
+        <string/>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>parsed_files</string>
+        <string/>
        </property>
       </widget>
      </item>

@@ -117,6 +117,27 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_8">
+         <property name="text">
+          <string>Audio</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_9">
+         <property name="text">
+          <string>E-Mails</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_10">
+         <property name="text">
+          <string>einklappen</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -167,7 +188,7 @@
        <item>
         <widget class="QPushButton" name="pushButton_switch">
          <property name="text">
-          <string>Switch to Main</string>
+          <string>zur Bibliothek</string>
          </property>
         </widget>
        </item>
