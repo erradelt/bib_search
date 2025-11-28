@@ -76,14 +76,14 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "Scanfortschritt"))
         self.label_7.setText(_translate("Dialog", "Scanfortschritt"))
         self.label.setText(_translate("Dialog", "Scanzeit:"))
         self.label_4.setText(_translate("Dialog", "scantime"))
         self.label_2.setText(_translate("Dialog", "gescannte Ordner:"))
-        self.label_5.setText(_translate("Dialog", "scandir"))
+        self.label_5.setText(_translate("Dialog", "0"))
         self.label_3.setText(_translate("Dialog", "gescannte Dateien:"))
-        self.label_6.setText(_translate("Dialog", "scanfiles"))
+        self.label_6.setText(_translate("Dialog", "0"))
 
 
 if __name__ == "__main__":

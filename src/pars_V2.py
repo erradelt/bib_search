@@ -4,12 +4,19 @@ import os
 import time
 import datetime
 
-def write_dir_json(path: Path, file, indent_level=1, progress_callback=None, should_stop=None):
-    """Schreibt rekursiv die Verzeichnisstruktur, ohne alles in den RAM zu laden."""
+def write_dir_json(path: Path, file, indent_level=1, progress_callback=None, should_stop=None, total_counters=None):
+    """Schreibt rekursiv die Verzeichnisstruktur, ohne alles in den RAM zu laden.
+
+    `total_counters` is a mutable dict used to accumulate total counts across
+    the entire scan run. If provided, progress_callback will be called with the
+    running total of directories scanned (so the UI can display a cumulative
+    counter). This avoids restarting the displayed count per subdirectory.
+    """
     indent = "    " * indent_level
     entries = []
-    dir_count = 0
-    file_count = 0
+
+    if total_counters is None:
+        total_counters = {"dirs": 0, "files": 0}
 
     for item in sorted(path.iterdir(), key=lambda p: p.name.lower()):
         # Symlinks ignorieren → verhindert Endlosrekursion
@@ -19,29 +26,34 @@ def write_dir_json(path: Path, file, indent_level=1, progress_callback=None, sho
 
     for index, item in enumerate(entries):
         if should_stop and should_stop():
-            return dir_count, file_count
+            # Return placeholders; totals are stored in total_counters
+            return 0, 0
         is_last = index == len(entries) - 1
 
         # Ordner
         if item.is_dir():
-            dir_count += 1
+            # update global total
+            total_counters["dirs"] += 1
             if progress_callback:
-                progress_callback(dir_count)
+                # report cumulative dirs and files
+                progress_callback(total_counters["dirs"], total_counters["files"])
             file.write(f"{indent}{json.dumps(item.name)}: {{\n")
-            sub_dirs, sub_files = write_dir_json(item, file, indent_level + 1, progress_callback, should_stop)
-            dir_count += sub_dirs
-            file_count += sub_files
+            # recurse, passing the same totals dict
+            write_dir_json(item, file, indent_level + 1, progress_callback, should_stop, total_counters)
             file.write(f"{indent}}}")
         else:
             # Datei
-            file_count += 1
+            total_counters["files"] += 1
             file.write(f"{indent}{json.dumps(item.name)}: null")
+            # report cumulative progress after counting a file as well
+            if progress_callback:
+                progress_callback(total_counters["dirs"], total_counters["files"])
 
         if not is_last:
             file.write(",\n")
         else:
             file.write("\n")
-    return dir_count, file_count
+    return 0, 0
 
 
 def generate_bibliography(passedpath, dir_name, progress_callback=None, should_stop=None):
@@ -55,10 +67,11 @@ def generate_bibliography(passedpath, dir_name, progress_callback=None, should_s
 
     start_time = time.time()
 
+    totals = {"dirs": 0, "files": 0}
     with open(temp_file_path, "w", encoding="utf-8") as f:
         f.write("{\n")
         f.write(f"    {json.dumps(root_path.name)}: {{\n")
-        dir_count, file_count = write_dir_json(root_path, f, 2, progress_callback, should_stop)
+        write_dir_json(root_path, f, 2, progress_callback, should_stop, totals)
         f.write("    }\n")
         f.write("}\n")
 
@@ -75,8 +88,8 @@ def generate_bibliography(passedpath, dir_name, progress_callback=None, should_s
         metadata = {
             "last_parsed": last_parsed,
             "parsetime": parsetime,
-            "parsed_dirs": dir_count,
-            "parsed_files": file_count,
+            "parsed_dirs": totals.get("dirs", 0),
+            "parsed_files": totals.get("files", 0),
         }
         final_f.write(f'    "metadata": {json.dumps(metadata, indent=4)},\n')
         final_f.write('    "data": ')

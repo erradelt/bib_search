@@ -6,6 +6,7 @@ from path_manager_ui import Ui_Dialog
 from new_dir_path_dialog import Ui_Dialog as NewDirDialogUI
 from pars_call import parscaller
 from path_controller_logic import PathController
+from scan_dialog_logic import ScanDialog
 
 class PathManager(QtWidgets.QDialog):
     def __init__(self):
@@ -101,5 +102,13 @@ class PathManager(QtWidgets.QDialog):
             dir_name = ui.dir_name.text()
             dir_path = ui.dir_path.text()
             if dir_name and dir_path:
-                parscaller(dir_name, dir_path)
-                self.load_paths() # Refresh the list
+                # Update directories.json immediately, but don't run the
+                # potentially long parse synchronously. Start the parsing
+                # inside the existing ScanDialog so the user sees progress.
+                parscaller(dir_name, dir_path, run_parse=False)
+
+                # Start a ScanDialog to run the parsing in the background
+                scan_dialog = ScanDialog(dir_path, dir_name, parent=self)
+                # When the scan finishes, refresh the path list
+                scan_dialog.finished.connect(lambda res=None: self.load_paths())
+                scan_dialog.open()
