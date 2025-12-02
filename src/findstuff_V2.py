@@ -23,7 +23,7 @@ def load_active_data():
     set in the PathManager. Also returns the root path for that directory.
     """
     global data
-    active_dir_name = 'Bilder' # Default value
+    active_dir_name = 'default' # Default value
     active_dir_path = ''
 
     # Get the active directory name
@@ -142,7 +142,7 @@ def results_as_dict(search_term, dict_name=None):
     """
     global data
     active_dir_path = ''
-    
+
     if dict_name:
         data = file_loader(dict_name)
         try:

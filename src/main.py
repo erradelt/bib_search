@@ -7,7 +7,6 @@ from search_window import Ui_MainWindow
 from search_window_universal_logic import SearchWindowUniversal
 from search_window_cross_logic import SearchWindowCross
 from path_manager_logic import PathManager
-from bib_pars_V2 import root_path
 from findstuff_V2 import results_as_dict
 import findstuff_V2
 from endings import endings
@@ -96,15 +95,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.treeWidget.topLevelItem(i).setExpanded(True)
         else:
             self.ui.treeWidget.expandAll()
-        
+
         try:
             with open('active_path.json', 'r') as f:
                 data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             data = {}
-        
+
         data['collapse_state'] = self.ui.checkBox_10.isChecked()
-        
+
         with open('active_path.json', 'w') as f:
             json.dump(data, f, indent=4)
 

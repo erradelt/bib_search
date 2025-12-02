@@ -38,18 +38,33 @@ class PathManager(QtWidgets.QDialog):
         except FileNotFoundError:
             directories = {}
 
-        for dir_name, dir_path in directories.items():
+        for dir_name, dir_path in sorted(directories.items()):
             path_widget = PathController(dir_name, dir_path)
+            if dir_name.lower() == 'bibo':
+                path_widget.ui.pushButton_3.setEnabled(False)
             self.scroll_layout.addWidget(path_widget)
             self.button_group.addButton(path_widget.ui.radioButton)
             path_widget.radio_button_toggled.connect(self.on_path_selected)
             path_widget.delete_requested.connect(self.handle_delete_request)
+            path_widget.name_changed.connect(self.handle_name_change)
             
             line = QtWidgets.QFrame()
             line.setFrameShape(QtWidgets.QFrame.HLine)
             line.setFrameShadow(QtWidgets.QFrame.Sunken)
             self.scroll_layout.addWidget(line)
         self.check_active_path()
+    
+    def handle_name_change(self, old_name, new_name):
+        self.load_paths()
+        # also update active path if the renamed one was active
+        try:
+            with open("active_path.json", "r", encoding="utf-8") as f:
+                active_path_data = json.load(f)
+            if active_path_data.get("active") == old_name:
+                with open("active_path.json", "w", encoding="utf-8") as f:
+                    json.dump({"active": new_name}, f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass # No active path file, nothing to do
 
     def handle_delete_request(self, dir_name):
         # 1. Update directories.json

@@ -2,11 +2,14 @@ from PyQt5 import QtWidgets, QtCore
 from path_controller_widget import Ui_Form
 import json
 from pathlib import Path
+import os
 from scan_dialog_logic import ScanDialog
+from edit_dir_name_dialog_logic import EditDirNameDialog
 
 class PathController(QtWidgets.QWidget):
     radio_button_toggled = QtCore.pyqtSignal(bool, str)
     delete_requested = QtCore.pyqtSignal(str)
+    name_changed = QtCore.pyqtSignal(str, str) # old_name, new_name
 
     def __init__(self, dir_name, dir_path, parent=None):
         super().__init__(parent)
@@ -21,7 +24,62 @@ class PathController(QtWidgets.QWidget):
         self.ui.radioButton.toggled.connect(self.on_radio_button_toggled)
         self.ui.pushButton.clicked.connect(self.rescan_directory)
         self.ui.pushButton_2.clicked.connect(self.prompt_for_delete)
+        self.ui.pushButton_3.clicked.connect(self.open_edit_dialog)
         self.load_metadata()
+
+    def open_edit_dialog(self):
+        dialog = EditDirNameDialog(self.dir_name, self)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            new_name = dialog.get_new_name().strip()
+            if new_name and new_name != self.dir_name:
+                self.change_dir_name(new_name)
+
+    def change_dir_name(self, new_name):
+        try:
+            with open("directories.json", "r+", encoding="utf-8") as f:
+                directories = json.load(f)
+                if new_name in directories:
+                    QtWidgets.QMessageBox.warning(self, "Fehler", f"Der Name '{new_name}' existiert bereits.")
+                    return
+
+                path = directories.pop(self.dir_name)
+                directories[new_name] = path
+
+                f.seek(0)
+                f.truncate()
+                json.dump(directories, f, indent=4)
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            QtWidgets.QMessageBox.warning(self, "Fehler", f"Fehler beim Lesen/Schreiben von directories.json: {e}")
+            return
+
+        project_root = Path(__file__).resolve().parent.parent
+        dirs_path = project_root / "dirs"
+        old_json_path = dirs_path / f"{self.dir_name}.json"
+        new_json_path = dirs_path / f"{new_name}.json"
+
+        if old_json_path.exists():
+            try:
+                os.rename(old_json_path, new_json_path)
+            except OSError as e:
+                QtWidgets.QMessageBox.warning(self, "Fehler", f"Fehler beim Umbenennen der Datei: {e}")
+                with open("directories.json", "r+", encoding="utf-8") as f:
+                    directories = json.load(f)
+                    path = directories.pop(new_name)
+                    directories[self.dir_name] = path
+                    f.seek(0)
+                    f.truncate()
+                    json.dump(directories, f, indent=4)
+                return
+
+        old_name = self.dir_name
+        self.dir_name = new_name
+        self.ui.radioButton.setText(self.dir_name)
+
+        self.name_changed.emit(old_name, self.dir_name)
+
+        QtWidgets.QMessageBox.information(self, "Erfolg", "Verzeichnis erfolgreich umbenannt.")
+
 
     def prompt_for_delete(self):
         reply = QtWidgets.QMessageBox.question(self, 'Verzeichnis löschen',
@@ -51,7 +109,7 @@ class PathController(QtWidgets.QWidget):
                 self.set_default_labels()
         except (FileNotFoundError, json.JSONDecodeError):
             self.set_default_labels()
-
+            
     def set_default_labels(self):
         self.ui.label_2.setText("letzter Scan: N/A")
         self.ui.label_3.setText("Scandauer: N/A")
