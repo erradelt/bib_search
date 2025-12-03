@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/robert/Python/09_bib_search/ui/search_window_universal.ui'
+# Form implementation generated from reading ui file 'ui/search_window_universal.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import json
+
 
 class Ui_SearchWindowUniversal(object):
     def setupUi(self, SearchWindowUniversal):
@@ -49,39 +49,30 @@ class Ui_SearchWindowUniversal(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox.setObjectName("checkBox")
-        self.checkBox.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox)
         self.checkBox_2 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_2.setObjectName("checkBox_2")
-        self.checkBox_2.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_2)
         self.checkBox_5 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_5.setObjectName("checkBox_5")
-        self.checkBox_5.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_5)
         self.checkBox_6 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_6.setObjectName("checkBox_6")
-        self.checkBox_6.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_6)
         self.checkBox_7 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_7.setObjectName("checkBox_7")
-        self.checkBox_7.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_7)
         self.checkBox_3 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_3.setObjectName("checkBox_3")
-        self.checkBox_3.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_3)
         self.checkBox_4 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_4.setObjectName("checkBox_4")
-        self.checkBox_4.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_4)
         self.checkBox_8 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_8.setObjectName("checkBox_8")
-        self.checkBox_8.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_8)
         self.checkBox_9 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_9.setObjectName("checkBox_9")
-        self.checkBox_9.setChecked(True)
         self.horizontalLayout.addWidget(self.checkBox_9)
         self.checkBox_10 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_10.setObjectName("checkBox_10")
@@ -103,9 +94,6 @@ class Ui_SearchWindowUniversal(object):
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout_4.addWidget(self.pushButton_2)
-        self.pushButton_switch = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_switch.setObjectName("pushButton_switch")
-        self.horizontalLayout_4.addWidget(self.pushButton_switch)
         self.pushButton_multi = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_multi.setObjectName("pushButton_multi")
         self.horizontalLayout_4.addWidget(self.pushButton_multi)
@@ -115,16 +103,9 @@ class Ui_SearchWindowUniversal(object):
         self.retranslateUi(SearchWindowUniversal)
         QtCore.QMetaObject.connectSlotsByName(SearchWindowUniversal)
 
-        try:
-            with open('active_path.json', 'r') as f:
-                data = json.load(f)
-                self.checkBox_10.setChecked(data.get('collapse_state', False))
-        except (FileNotFoundError, json.JSONDecodeError):
-            pass
-
     def retranslateUi(self, SearchWindowUniversal):
         _translate = QtCore.QCoreApplication.translate
-        SearchWindowUniversal.setWindowTitle(_translate("SearchWindowUniversal", "Universal-Suche"))
+        SearchWindowUniversal.setWindowTitle(_translate("SearchWindowUniversal", "MainWindow"))
         self.pushButton.setText(_translate("SearchWindowUniversal", "suchen"))
         self.label.setText(_translate("SearchWindowUniversal", "Dateitypen"))
         self.checkBox.setText(_translate("SearchWindowUniversal", "alles"))
@@ -137,19 +118,8 @@ class Ui_SearchWindowUniversal(object):
         self.checkBox_8.setText(_translate("SearchWindowUniversal", "Audio"))
         self.checkBox_9.setText(_translate("SearchWindowUniversal", "E-Mails"))
         self.checkBox_10.setText(_translate("SearchWindowUniversal", "einklappen"))
-        self.treeWidget.headerItem().setText(0, _translate("SearchWindowUniversal", ""))
+        self.treeWidget.headerItem().setText(0, _translate("SearchWindowUniversal", "folder"))
         self.label_2.setText(_translate("SearchWindowUniversal", "aktuelles Verzeichnis "))
         self.label_3.setText(_translate("SearchWindowUniversal", "TextLabel"))
         self.pushButton_2.setText(_translate("SearchWindowUniversal", "Verzeichnisse"))
-        self.pushButton_switch.setText(_translate("SearchWindowUniversal", "zur Bibliothek"))
         self.pushButton_multi.setText(_translate("SearchWindowUniversal", "zu Multi"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    SearchWindowUniversal = QtWidgets.QMainWindow()
-    ui = Ui_SearchWindowUniversal()
-    ui.setupUi(SearchWindowUniversal)
-    SearchWindowUniversal.show()
-    sys.exit(app.exec_())
