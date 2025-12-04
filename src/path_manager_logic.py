@@ -40,8 +40,6 @@ class PathManager(QtWidgets.QDialog):
 
         for dir_name, dir_path in sorted(directories.items()):
             path_widget = PathController(dir_name, dir_path)
-            if dir_name.lower() == 'bibo':
-                path_widget.ui.pushButton_3.setEnabled(False)
             self.scroll_layout.addWidget(path_widget)
             self.button_group.addButton(path_widget.ui.radioButton)
             path_widget.radio_button_toggled.connect(self.on_path_selected)
