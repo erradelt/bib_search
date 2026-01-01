@@ -186,9 +186,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_switch">
+        <widget class="QPushButton" name="pushButton_multi">
          <property name="text">
-          <string>zur Bibliothek</string>
+          <string>zu Multi</string>
          </property>
         </widget>
        </item>

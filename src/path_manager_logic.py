@@ -45,13 +45,13 @@ class PathManager(QtWidgets.QDialog):
             path_widget.radio_button_toggled.connect(self.on_path_selected)
             path_widget.delete_requested.connect(self.handle_delete_request)
             path_widget.name_changed.connect(self.handle_name_change)
-            
+
             line = QtWidgets.QFrame()
             line.setFrameShape(QtWidgets.QFrame.HLine)
             line.setFrameShadow(QtWidgets.QFrame.Sunken)
             self.scroll_layout.addWidget(line)
         self.check_active_path()
-    
+
     def handle_name_change(self, old_name, new_name):
         self.load_paths()
         # also update active path if the renamed one was active
@@ -93,7 +93,7 @@ class PathManager(QtWidgets.QDialog):
                 active_dir_name = active_path_data.get("active")
         except (FileNotFoundError, json.JSONDecodeError):
             active_dir_name = None
-        
+
         for i in range(self.scroll_layout.count()):
             widget = self.scroll_layout.itemAt(i).widget()
             if isinstance(widget, PathController) and widget.dir_name == active_dir_name:

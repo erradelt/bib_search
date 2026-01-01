@@ -8,6 +8,7 @@ from path_manager_logic import PathManager
 from findstuff_V2 import results_as_dict
 import findstuff_V2
 from endings import endings
+from text_search_logic import TextSearchWidget
 
 class SearchWindowUniversal(QtWidgets.QMainWindow):
     def __init__(self):
@@ -215,7 +216,25 @@ class SearchWindowUniversal(QtWidgets.QMainWindow):
         if item:
             menu = QtWidgets.QMenu()
             copy_action = menu.addAction("Pfad kopieren")
+
+            rel_path_tuple = item.data(0, 1000)
+            is_file = rel_path_tuple and not item.childCount() > 0
+            is_directory = rel_path_tuple and item.childCount() > 0 # A directory has children
+            
+            # Condition for showing the text search widget: PDF file or any directory
+            show_text_search = (is_file and rel_path_tuple[-1].lower().endswith('.pdf')) or is_directory
+
+            if show_text_search:
+                full_path = Path(self.current_root_path).joinpath(*rel_path_tuple)
+                if full_path.exists():
+                    menu.addSeparator()
+                    widget = TextSearchWidget(full_path)
+                    widget_action = QtWidgets.QWidgetAction(menu)
+                    widget_action.setDefaultWidget(widget)
+                    menu.addAction(widget_action)
+
             action = menu.exec_(self.ui.treeWidget.mapToGlobal(position))
+            
             if action == copy_action:
                 self.copy_item_path(item)
 
