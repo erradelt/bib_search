@@ -89,15 +89,15 @@ class SearchWindowUniversal(QtWidgets.QMainWindow):
                 self.ui.treeWidget.topLevelItem(i).setExpanded(True)
         else:
             self.ui.treeWidget.expandAll()
-        
+
         try:
             with open('active_path.json', 'r') as f:
                 data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             data = {}
-        
+
         data['collapse_state'] = self.ui.checkBox_10.isChecked()
-        
+
         with open('active_path.json', 'w') as f:
             json.dump(data, f, indent=4)
 
@@ -220,9 +220,11 @@ class SearchWindowUniversal(QtWidgets.QMainWindow):
             rel_path_tuple = item.data(0, 1000)
             is_file = rel_path_tuple and not item.childCount() > 0
             is_directory = rel_path_tuple and item.childCount() > 0 # A directory has children
-            
+
             # Condition for showing the text search widget: PDF file or any directory
-            show_text_search = (is_file and rel_path_tuple[-1].lower().endswith('.pdf')) or is_directory
+            pdf = is_file and rel_path_tuple[-1].lower().endswith('.pdf')
+            docx = is_file and rel_path_tuple[-1].lower().endswith('.docx')
+            show_text_search = pdf or docx or is_directory
 
             if show_text_search:
                 full_path = Path(self.current_root_path).joinpath(*rel_path_tuple)
@@ -234,7 +236,7 @@ class SearchWindowUniversal(QtWidgets.QMainWindow):
                     menu.addAction(widget_action)
 
             action = menu.exec_(self.ui.treeWidget.mapToGlobal(position))
-            
+
             if action == copy_action:
                 self.copy_item_path(item)
 

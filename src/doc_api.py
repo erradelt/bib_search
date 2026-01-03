@@ -1,7 +1,6 @@
 from pathlib import Path
 import json
-from pdf_reader import PDFhandler
-
+from doc_reader import PDFhandler, DOChandler, EXLhandler
 class API:
     def __init__(self, dict_path, searchterm):
         self.dictpath = dict_path
@@ -83,7 +82,6 @@ class API:
                 for dict in values: # extract the dict from the returned list
                     for key, value in dict.items(): # keys of the returned dict are the values we need
                         self.key_collector.append(str(self.dictpath)+f'/{key}') # append the given dictpath and combine it with the given key for full path to data
-
         else:
             pass
 
