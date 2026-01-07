@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 from doc_reader import PDFhandler, DOChandler, EXLhandler
+
 class API:
     def __init__(self, dict_path, searchterm):
         self.dictpath = dict_path

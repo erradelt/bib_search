@@ -6,14 +6,34 @@ class EXLhandler:
     def __init__(self, doc_path, searchterm):
         self.doc_path = doc_path
         self.searchterm = searchterm
+        self.sheetnames = []
+        self.rows = {}
+        self.found_items = {}
 
     def read_doc(self):
         return(load_workbook(self.doc_path))
 
     def exl_to_sheets(self):
         for sheet in self.read_doc().sheetnames:
-            ws = self.read_doc()[sheet]
-            print('sheet: ', sheet)
+            self.sheetnames.append(sheet)
+        return self.sheetnames
+
+    def sheets_to_rows(self):
+        for sheet in self.exl_to_sheets():
+            temp = []
+            self.ws = self.read_doc()[sheet]
+            for row in self.ws.iter_rows(min_row=2, values_only=True):
+                temp.append(row)
+            self.rows[sheet]=temp
+        return self.rows
+
+    def searchterm_finder(self):
+        for key, value in self.sheets_to_rows().items():
+            for list in value:
+                for item in list:
+                    if self.searchterm == item:
+                        self.found_items[f'sheet: {key}'] = item
+        return self.found_items
 
 class DOChandler:
     def __init__(self, doc_path, searchterm):
@@ -71,5 +91,5 @@ class PDFhandler:
                 self.found_dict[key]=f'...{value[start:end]}...'.replace('\n','')
         return self.found_dict
 
-exltest = EXLhandler('/home/robert/Downloads/beispiel_mehrere_tabellenblaetter.xlsx','test')
-exltest.exl_to_sheets()
+exltest = EXLhandler('/home/robert/Downloads/beispiel_mehrere_tabellenblaetter.xlsx','Wartung')
+print(exltest.searchterm_finder())
